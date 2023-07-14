@@ -1,8 +1,9 @@
-﻿#include "raylib.h"
+﻿#include <raylib.h>
 #include <math.h>
 
 #define RAYGUI_IMPLEMENTATION
-#include "raygui.h"                 // Required for GUI controls
+// #include "raygui.h"                 // Required for GUI controls
+#include <raygui.h>                 // Required for GUI controls
 
 int main(void)
 {
@@ -51,7 +52,7 @@ int main(void)
             ClearBackground(Fade(MAROON, 0.8f));
             DrawCircleV(mousePosition, pointerRadius * delta * 165 * (sin(nowTime) + 1) + 20, LIGHTGRAY);
             DrawFPS(10, 10);
-            GuiCheckBox((Rectangle) { 600, 320, 20, 20 }, "My Checkbox", & gui_check);
+            GuiCheckBox({ 600, 320, 20, 20 }, "My Checkbox", & gui_check);
             GuiValueBox(play_button, "Number of Players", &players, 2, 8, gui_check);
             //GuiSpinner(play_button, "Number of Players", &players, 2, 8, false);
             //play = GuiLabelButton(play_button, "PLAY");
