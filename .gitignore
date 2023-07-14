@@ -30,3 +30,26 @@
 *.exe
 *.out
 *.app
+
+# Ignore compiled binaries
+*.o
+*.exe
+*.a
+*.bc
+*.so
+*.so.*
+
+# CMake stuff
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+build
+
+# VSCode stuff
+.vscode
+
