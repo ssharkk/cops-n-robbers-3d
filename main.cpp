@@ -1,6 +1,9 @@
 ﻿#include "raylib.h"
 #include <math.h>
 
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"                 // Required for GUI controls
+
 int main(void)
 {
     // Initialization
@@ -16,6 +19,10 @@ int main(void)
     double nowTime = 1;
     SetConfigFlags(FLAG_VSYNC_HINT);
     SetTargetFPS(165);
+    bool gui_check = false, prev_gui_check = true;
+    Rectangle play_button = { 100, 50, 200, 100 };
+    bool play = false;
+    int players = 2;
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -26,15 +33,28 @@ int main(void)
         mousePosition = GetMousePosition();
         delta = GetFrameTime();
         nowTime = GetTime();
+        if (prev_gui_check != gui_check) {
+            if (gui_check) SetTargetFPS(60);
+            else SetTargetFPS(165);
+            prev_gui_check = gui_check;
+        }
+        if (play) {
+            printf("PLAY now!");
+        }
         //----------------------------------------------------------------------------------
 
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            ClearBackground(RAYWHITE);
-            DrawCircleV(mousePosition, pointerRadius * delta * 165 * (sin(nowTime) + 1), LIGHTGRAY);
+            //ClearBackground(RAYWHITE);
+            ClearBackground(Fade(MAROON, 0.8f));
+            DrawCircleV(mousePosition, pointerRadius * delta * 165 * (sin(nowTime) + 1) + 20, LIGHTGRAY);
             DrawFPS(10, 10);
+            GuiCheckBox((Rectangle) { 600, 320, 20, 20 }, "My Checkbox", & gui_check);
+            GuiValueBox(play_button, "Number of Players", &players, 2, 8, gui_check);
+            //GuiSpinner(play_button, "Number of Players", &players, 2, 8, false);
+            //play = GuiLabelButton(play_button, "PLAY");
 
         EndDrawing();
         //----------------------------------------------------------------------------------
