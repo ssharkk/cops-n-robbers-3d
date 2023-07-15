@@ -29,7 +29,7 @@ namespace copsNrobbers3D
     //  int playerCount = 2;
     //  const int MAX_PLAYERS = 9;
 
-    static int slice_height_splitscreen = screenHeight/playerCount;
+    extern int slice_height_splitscreen;
     //  Camera cameras_splitscreen[MAX_PLAYERS];
     //  RenderTexture screens_splitscreen[MAX_PLAYERS];
 

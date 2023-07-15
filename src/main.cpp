@@ -42,7 +42,7 @@ int main(void)
         screens_splitscreen[i] = LoadRenderTexture(screenWidth, slice_height_splitscreen);
     }
     
-    Rectangle splitScreenRect = { 0.0f, 0.0f, (float)screens_splitscreen[0].texture.width, (float)-screens_splitscreen[0].texture.height };
+    Rectangle splitScreenRect = { 0.0f, 0.0f, (float)screens_splitscreen[0].texture.width, (float)-slice_height_splitscreen };
 
     Vector2 mousePosition = { GetScreenWidth() / 2.0f , GetScreenHeight() / 2.0f };
 
@@ -68,6 +68,25 @@ int main(void)
             if (gui_check) SetTargetFPS(60);
             else SetTargetFPS(165);
             prev_gui_check = gui_check;
+
+            playerCount = players;
+            slice_height_splitscreen = screenHeight/playerCount;
+            splitScreenRect.height = (float)-slice_height_splitscreen;
+            for (int i = 0; i < playerCount; i++)
+            {
+                // Setup player i camera and screen
+                cameras_splitscreen[i] = {};
+                Camera *camera = &cameras_splitscreen[i];
+                camera->fovy = 45.0f;
+                camera->up.y = 1.0f;
+                camera->target.y = 1.0f;
+                camera->position.z = -3.0f;
+                camera->position.y = 1.0f;
+
+                screens_splitscreen[i] = LoadRenderTexture(screenWidth, slice_height_splitscreen);
+            }
+            
+
         }
         if (play) {
             printf("PLAY now!");
@@ -102,15 +121,12 @@ int main(void)
             {
                 DrawTextureRec(screens_splitscreen[i].texture, splitScreenRect, { 0, (float) slice_height_splitscreen*i }, WHITE);
             }
-            // DrawTextureRec(screenPlayer1.texture, splitScreenRect, { 0, 0 }, WHITE);
-            // DrawTextureRec(screenPlayer2.texture, splitScreenRect, { screenWidth/2.0f, 0 +screenHeight/3.0f }, WHITE);
-            // DrawTextureRec(screenPlayer1.texture, splitScreenRect, { 0, screenHeight/2.0f }, WHITE);
-            // DrawTextureRec(screenPlayer2.texture, splitScreenRect, { screenWidth/2.0f, screenHeight/2.0f}, WHITE);
 
             DrawCircleV(mousePosition, pointerRadius * deltaFrameTime * 165 * (sin(nowTime) + 1) + 20, LIGHTGRAY);
             DrawFPS(10, 10);
             GuiCheckBox({ 600, 320, 20, 20 }, "My Checkbox", & gui_check);
-            GuiValueBox(play_button, "Number of Players", &players, 2, 8, gui_check);
+            GuiSpinner(play_button, "Number of Players", &players, 2, MAX_PLAYERS, false);
+            DrawText(std::to_string(players).c_str(), screenWidth/2, 10, 20, GREEN);
             //GuiSpinner(play_button, "Number of Players", &players, 2, 8, false);
             //play = GuiLabelButton(play_button, "PLAY");
 
