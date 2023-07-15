@@ -5,6 +5,11 @@ set(BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 11)
 
+include_directories(
+		${PROJECT_SOURCE_DIR}/include
+		${PROJECT_SOURCE_DIR}/src
+)
+
 add_subdirectory(external/raylib)
 # add_subdirectory(external/raygui)
 
@@ -19,7 +24,14 @@ set(CMAKE_C_STANDARD 11) # Requires C11 standard
 # include(CTest)
 # enable_testing()
 
-add_executable(cops-n-robbers-3d main.cpp)
+file(GLOB all_SRCS
+        "${PROJECT_SOURCE_DIR}/include/*.h"
+		"${PROJECT_SOURCE_DIR}/include/*.hpp"
+		"${PROJECT_SOURCE_DIR}/src/*.c"
+        "${PROJECT_SOURCE_DIR}/src/*.cpp"
+        )
+
+add_executable(cops-n-robbers-3d ${all_SRCS})
 
 
 target_include_directories(raygui INTERFACE
