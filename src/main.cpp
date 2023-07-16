@@ -1,6 +1,7 @@
 ﻿#include "globals.hpp"
 #include<string>
 #include <raylib.h>
+#include <raymath.h>
 #include <math.h>
 
 #define RAYGUI_IMPLEMENTATION
@@ -90,6 +91,25 @@ int main(void)
         }
         if (play) {
             printf("PLAY now!");
+        }
+
+        // Test input controls on player #3
+        if (playerCount >= 3) {
+            // Turn player left or right
+            Vector3 target = cameras_splitscreen[2].target, position = cameras_splitscreen[2].position;
+            if (IsKeyDown(KEY_R))
+            {
+                cameras_splitscreen[2].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, -deltaFrameTime*1)));
+            }
+            if (IsKeyDown(KEY_E))
+            {
+                cameras_splitscreen[2].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, deltaFrameTime*1)));
+            }
+            // Move player forward
+            target = cameras_splitscreen[2].target, position = cameras_splitscreen[2].position;
+            Vector3 move = Vector3Scale(Vector3Subtract(target, position), deltaFrameTime);
+            cameras_splitscreen[2].position = Vector3(Vector3Add(position, move));
+            cameras_splitscreen[2].target = Vector3(Vector3Add(target, move));
         }
 
         cameras_splitscreen[0].position.x += deltaFrameTime;
