@@ -136,7 +136,7 @@ int main(void)
                 BeginMode3D(cameras_splitscreen[i]);
                     DrawScene();
                 EndMode3D();
-                DrawText(("PLAYER"+std::to_string(i)+" W/S to move").c_str(), 10, 10, 20, RED);
+                DrawText(("PLAYER"+std::to_string(i)+" "+ players_settings[i].keys_hint +" to move").c_str(), 10, 10, 20, RED);
             EndTextureMode();
         }
         
