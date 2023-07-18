@@ -1,12 +1,12 @@
 #include "raylib.h"
 #include "scene.hpp"
 #include "globals.hpp"
-
+#include "playersettings.hpp"
 // using namespace copsNrobbers3D;
 
 namespace copsNrobbers3D
 {
-    extern int playerCount;
+    extern int player_count;
 }
 
     // Scene drawing
@@ -28,7 +28,7 @@ void copsNrobbers3D::DrawScene(void)
     }
 
     // Draw a cube at each player's position
-    for (int i = 0; i < copsNrobbers3D::playerCount; i++)
+    for (int i = 0; i < copsNrobbers3D::player_count; i++)
     {
         DrawCube(copsNrobbers3D::cameras_splitscreen[i].position, 1, 1, 1, RED);
     }

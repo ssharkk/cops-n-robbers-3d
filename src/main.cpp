@@ -10,6 +10,7 @@
 
 
 #include "scene.hpp"
+#include "playersettings.hpp"
 
 // namespace copsNrobbers3D
 // {
@@ -29,7 +30,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "Cops'N'Robbers 3D");
 
-    for (int i = 0; i < copsNrobbers3D::playerCount; i++)
+    for (int i = 0; i < copsNrobbers3D::player_count; i++)
     {
         // Setup player i camera and screen
         cameras_splitscreen[i] = {};
@@ -70,10 +71,10 @@ int main(void)
             else SetTargetFPS(165);
             prev_gui_check = gui_check;
 
-            playerCount = players;
-            slice_height_splitscreen = screenHeight/playerCount;
+            player_count = players;
+            slice_height_splitscreen = screenHeight/player_count;
             splitScreenRect.height = (float)-slice_height_splitscreen;
-            for (int i = 0; i < playerCount; i++)
+            for (int i = 0; i < player_count; i++)
             {
                 // Setup player i camera and screen
                 cameras_splitscreen[i] = {};
@@ -94,27 +95,33 @@ int main(void)
         }
 
         // Test input controls on player #3
-        if (playerCount >= 3) {
+        if (player_count <= 4) {
             // Turn player left or right
-            Vector3 target = cameras_splitscreen[2].target, position = cameras_splitscreen[2].position;
-            if (IsKeyDown(KEY_R))
+            Vector3 target, position;
+            for (int i = 0; i < copsNrobbers3D::player_count; i++)
             {
-                cameras_splitscreen[2].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, -deltaFrameTime*1)));
+                target = cameras_splitscreen[i].target, position = cameras_splitscreen[i].position;
+                if (IsKeyDown(players_settings[i].key_left))
+                {
+                    cameras_splitscreen[i].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, deltaFrameTime*1)));
+                }
+                if (IsKeyDown(players_settings[i].key_right))
+                {
+                    cameras_splitscreen[i].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, -deltaFrameTime*1)));
+                }
+                // Move player forward
+                if (IsKeyDown(players_settings[i].key_forward)) {
+                    target = cameras_splitscreen[i].target, position = cameras_splitscreen[i].position;
+                    Vector3 move = Vector3Scale(Vector3Subtract(target, position), deltaFrameTime);
+                    cameras_splitscreen[i].position = Vector3(Vector3Add(position, move));
+                    cameras_splitscreen[i].target = Vector3(Vector3Add(target, move));
+                }
             }
-            if (IsKeyDown(KEY_E))
-            {
-                cameras_splitscreen[2].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, deltaFrameTime*1)));
-            }
-            // Move player forward
-            target = cameras_splitscreen[2].target, position = cameras_splitscreen[2].position;
-            Vector3 move = Vector3Scale(Vector3Subtract(target, position), deltaFrameTime);
-            cameras_splitscreen[2].position = Vector3(Vector3Add(position, move));
-            cameras_splitscreen[2].target = Vector3(Vector3Add(target, move));
         }
 
-        cameras_splitscreen[0].position.x += deltaFrameTime;
-        cameras_splitscreen[0].target.x += deltaFrameTime;
-        cameras_splitscreen[1].target.x += deltaFrameTime;
+        // cameras_splitscreen[0].position.x += deltaFrameTime;
+        // cameras_splitscreen[0].target.x += deltaFrameTime;
+        // cameras_splitscreen[1].target.x += deltaFrameTime;
         // cameras_splitscreen[1]..x += deltaFrameTime;
         //----------------------------------------------------------------------------------
 
@@ -122,7 +129,7 @@ int main(void)
         //----------------------------------------------------------------------------------
 
         // Draw Player1 view to the render texture
-        for (int i = 0; i < copsNrobbers3D::playerCount; i++)
+        for (int i = 0; i < copsNrobbers3D::player_count; i++)
         {
             BeginTextureMode(screens_splitscreen[i]);
                 ClearBackground(SKYBLUE);
@@ -137,7 +144,7 @@ int main(void)
         BeginDrawing();
             ClearBackground(Fade(MAROON, 0.8f));
             // ClearBackground(RAYWHITE);
-            for (int i = 0; i < copsNrobbers3D::playerCount; i++)
+            for (int i = 0; i < copsNrobbers3D::player_count; i++)
             {
                 DrawTextureRec(screens_splitscreen[i].texture, splitScreenRect, { 0, (float) slice_height_splitscreen*i }, WHITE);
             }
