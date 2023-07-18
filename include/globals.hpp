@@ -1,6 +1,7 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
+// #ifndef GLOBALS_H
+// #define GLOBALS_H
 
+#pragma once
 #include <vector>
 #include "raylib.h"
 #include "playersettings.hpp"
@@ -12,7 +13,7 @@ namespace copsNrobbers3D
     //----------------------------------------------------------------------------------
 
     const int MAX_PLAYERS = 9;
-    
+
     const int screenWidth = 1280;
     const int screenHeight = 720;
 
@@ -31,7 +32,7 @@ namespace copsNrobbers3D
     extern Camera cameras_splitscreen[];
     extern RenderTexture screens_splitscreen[];
     extern int slice_height_splitscreen;
-
+    extern Rectangle splitScreenRect;
 } // namespace copsNrobbers3D
 
-#endif
+// #endif

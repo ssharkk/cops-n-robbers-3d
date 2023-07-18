@@ -1,16 +1,16 @@
 ﻿#include "globals.hpp"
-#include<string>
+#include <string>
 #include <raylib.h>
 #include <raymath.h>
 #include <math.h>
 
 #define RAYGUI_IMPLEMENTATION
 // #include "raygui.h"                 // Required for GUI controls
-#include <raygui.h>                 // Required for GUI controls
-
+#include <raygui.h> // Required for GUI controls
 
 #include "scene.hpp"
 #include "playersettings.hpp"
+#include "gameui.hpp"
 
 // namespace copsNrobbers3D
 // {
@@ -22,109 +22,83 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    // const int screenWidth = 800;
-    // const int screenHeight = 450;
-    // cameras_splitscreen = new Camera[MAX_PLAYERS];
-    // screens_splitscreen = new RenderTexture[MAX_PLAYERS];
     const int pointerRadius = 16;
 
     InitWindow(screenWidth, screenHeight, "Cops'N'Robbers 3D");
 
-    for (int i = 0; i < copsNrobbers3D::player_count; i++)
-    {
-        // Setup player i camera and screen
-        cameras_splitscreen[i] = {};
-        Camera *camera = &cameras_splitscreen[i];
-        camera->fovy = 45.0f;
-        camera->up.y = 1.0f;
-        camera->target.y = 1.0f;
-        camera->position.z = -3.0f;
-        camera->position.y = 1.0f;
+    initCameras();
 
-        screens_splitscreen[i] = LoadRenderTexture(screenWidth, slice_height_splitscreen);
-    }
-    
-    Rectangle splitScreenRect = { 0.0f, 0.0f, (float)screens_splitscreen[0].texture.width, (float)-slice_height_splitscreen };
+    Vector2 mousePosition = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 
-    Vector2 mousePosition = { GetScreenWidth() / 2.0f , GetScreenHeight() / 2.0f };
-
-    double deltaFrameTime = 1;
-    double nowTime = 1;
+    double deltaFrameTime;
+    double nowTime;
     SetConfigFlags(FLAG_VSYNC_HINT);
     SetTargetFPS(165);
+
     bool gui_check = false, prev_gui_check = true;
-    Rectangle play_button = { 100, 50, 200, 100 };
-    bool play = false;
+    Rectangle playercount_field_rect = {100, 50, 80, 100};
     int players = 2;
     //--------------------------------------------------------------------------------------
 
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         // Update
         //----------------------------------------------------------------------------------
         mousePosition = GetMousePosition();
         deltaFrameTime = GetFrameTime();
         nowTime = GetTime();
-        if (prev_gui_check != gui_check) {
-            if (gui_check) SetTargetFPS(60);
-            else SetTargetFPS(165);
+        if (prev_gui_check != gui_check)
+        {
+            if (gui_check)
+                SetTargetFPS(60);
+            else
+                SetTargetFPS(165);
             prev_gui_check = gui_check;
 
             player_count = players;
-            slice_height_splitscreen = screenHeight/player_count;
-            splitScreenRect.height = (float)-slice_height_splitscreen;
-            for (int i = 0; i < player_count; i++)
-            {
-                // Setup player i camera and screen
-                cameras_splitscreen[i] = {};
-                Camera *camera = &cameras_splitscreen[i];
-                camera->fovy = 45.0f;
-                camera->up.y = 1.0f;
-                camera->target.y = 1.0f;
-                camera->position.z = -3.0f;
-                camera->position.y = 1.0f;
-
-                screens_splitscreen[i] = LoadRenderTexture(screenWidth, slice_height_splitscreen);
-            }
+            RefreshCameraLayout();
             
-
-        }
-        if (play) {
-            printf("PLAY now!");
         }
 
         // Test input controls on player #3
-        if (player_count <= 4) {
+        if (player_count <= 4)
+        {
             // Turn player left or right
             Vector3 target, position;
             for (int i = 0; i < copsNrobbers3D::player_count; i++)
             {
                 target = cameras_splitscreen[i].target, position = cameras_splitscreen[i].position;
-                if (IsKeyDown(players_settings[i].key_left))
-                {
-                    cameras_splitscreen[i].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, deltaFrameTime*1)));
+                float forward_mult = 0;
+                if (IsKeyDown(players_settings[i].key_forward)) {
+                    forward_mult = 1;
                 }
-                if (IsKeyDown(players_settings[i].key_right))
+
+                if (IsKeyDown(players_settings[i].key_left) & IsKeyDown(players_settings[i].key_right)) {
+                    if (IsKeyUp(players_settings[i].key_forward))
+                        forward_mult = -1;
+                }
+                else if (IsKeyDown(players_settings[i].key_left))
                 {
-                    cameras_splitscreen[i].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, -deltaFrameTime*1)));
+                    cameras_splitscreen[i].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, deltaFrameTime * 1)));
+                }
+                else if (IsKeyDown(players_settings[i].key_right))
+                {
+                    cameras_splitscreen[i].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, -deltaFrameTime * 1)));
                 }
                 // Move player forward
-                if (IsKeyDown(players_settings[i].key_forward)) {
+                
+                if (forward_mult != 0)
+                {
                     target = cameras_splitscreen[i].target, position = cameras_splitscreen[i].position;
-                    Vector3 move = Vector3Scale(Vector3Subtract(target, position), deltaFrameTime);
+                    Vector3 move = Vector3Scale(Vector3Subtract(target, position), forward_mult * deltaFrameTime);
                     cameras_splitscreen[i].position = Vector3(Vector3Add(position, move));
                     cameras_splitscreen[i].target = Vector3(Vector3Add(target, move));
                 }
             }
         }
 
-        // cameras_splitscreen[0].position.x += deltaFrameTime;
-        // cameras_splitscreen[0].target.x += deltaFrameTime;
-        // cameras_splitscreen[1].target.x += deltaFrameTime;
-        // cameras_splitscreen[1]..x += deltaFrameTime;
         //----------------------------------------------------------------------------------
-
         // Draw
         //----------------------------------------------------------------------------------
 
@@ -132,30 +106,26 @@ int main(void)
         for (int i = 0; i < copsNrobbers3D::player_count; i++)
         {
             BeginTextureMode(screens_splitscreen[i]);
-                ClearBackground(SKYBLUE);
-                BeginMode3D(cameras_splitscreen[i]);
-                    DrawScene();
-                EndMode3D();
-                DrawText(("PLAYER"+std::to_string(i)+" "+ players_settings[i].keys_hint +" to move").c_str(), 10, 10, 20, RED);
+            ClearBackground(SKYBLUE);
+            BeginMode3D(cameras_splitscreen[i]);
+            DrawScene();
+            EndMode3D();
+            DrawText(("PLAYER" + std::to_string(i) + " " + players_settings[i].keys_hint + " to move").c_str(), 50, 10, 20, RED);
             EndTextureMode();
         }
-        
+
         // Draw both views render textures to the screen side by side
         BeginDrawing();
+
             ClearBackground(Fade(MAROON, 0.8f));
             // ClearBackground(RAYWHITE);
-            for (int i = 0; i < copsNrobbers3D::player_count; i++)
-            {
-                DrawTextureRec(screens_splitscreen[i].texture, splitScreenRect, { 0, (float) slice_height_splitscreen*i }, WHITE);
-            }
+            DrawCamerasLayout();
 
-            DrawCircleV(mousePosition, pointerRadius * deltaFrameTime * 165 * (sin(nowTime) + 1) + 20, LIGHTGRAY);
+            // Draw gui overlay
             DrawFPS(10, 10);
-            GuiCheckBox({ 600, 320, 20, 20 }, "My Checkbox", & gui_check);
-            GuiSpinner(play_button, "Number of Players", &players, 2, MAX_PLAYERS, false);
-            DrawText(std::to_string(players).c_str(), screenWidth/2, 10, 20, GREEN);
-            //GuiSpinner(play_button, "Number of Players", &players, 2, 8, false);
-            //play = GuiLabelButton(play_button, "PLAY");
+            GuiCheckBox({120, 180, 20, 20}, "My Checkbox", &gui_check);
+            GuiSpinner(playercount_field_rect, "Number of Players", &players, 2, MAX_PLAYERS, false);
+            DrawText(std::to_string(player_count).c_str(), screenWidth / 2, 10, 20, GREEN);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -163,7 +133,7 @@ int main(void)
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
+    CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
     return 0;
