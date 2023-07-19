@@ -1,4 +1,5 @@
 #pragma once
+#include <raylib.h>
 
 void ApplyInput();
 void ApplyControls(float steer, float gas, int player_id);

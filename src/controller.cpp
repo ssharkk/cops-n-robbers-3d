@@ -1,7 +1,10 @@
+
+#include "controller.hpp"
+
 #include <raylib.h>
 #include <raymath.h>
+
 #include "globals.hpp"
-#include "controller.hpp"
 
 using namespace copsNrobbers3D;
 

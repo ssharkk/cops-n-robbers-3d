@@ -1,6 +1,3 @@
-// #ifndef GLOBALS_H
-// #define GLOBALS_H
-
 #pragma once
 #include <vector>
 #include "raylib.h"
@@ -34,5 +31,3 @@ namespace copsNrobbers3D
     extern int slice_height_splitscreen;
     extern Rectangle splitScreenRect;
 } // namespace copsNrobbers3D
-
-// #endif

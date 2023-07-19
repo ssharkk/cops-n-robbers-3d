@@ -1,17 +1,18 @@
-﻿#include "globals.hpp"
-#include <string>
+﻿#include <string>
+
 #include <raylib.h>
 #include <raymath.h> // Required for camera controls vector math
 
 #define RAYGUI_IMPLEMENTATION
 #include <raygui.h> // Required for GUI controls
 
+#include "globals.hpp"
 #include "scene.hpp"
 #include "playersettings.hpp"
 #include "gameui.hpp"
 #include "controller.hpp"
-
 using namespace copsNrobbers3D;
+
 int main(void)
 {
     // Initialization

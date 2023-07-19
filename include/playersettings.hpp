@@ -1,8 +1,4 @@
-#ifndef PLAYERSETTINGS_H
-#define PLAYERSETTINGS_H
-// #pragma once
-
-// #include "string.h"
+#pragma once
 #include "raylib.h"
 #include <string>
 
@@ -13,5 +9,3 @@ struct PlayerSettings {
     KeyboardKey key_right;
     std::string keys_hint;
 };
-
-#endif
