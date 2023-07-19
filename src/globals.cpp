@@ -3,7 +3,7 @@
 namespace copsNrobbers3D
 {
 
-    extern int player_count { 8 };
+    extern int player_count { 3 };
     extern std::vector<PlayerSettings> players_settings = {
         {1, KEY_Q, KEY_W, KEY_E, "Q/W/E"},
         {2, KEY_A, KEY_S, KEY_D, "A/S/D"},

@@ -1,21 +1,15 @@
 ﻿#include "globals.hpp"
 #include <string>
 #include <raylib.h>
-#include <raymath.h>
-#include <math.h>
+#include <raymath.h> // Required for camera controls vector math
 
 #define RAYGUI_IMPLEMENTATION
-// #include "raygui.h"                 // Required for GUI controls
 #include <raygui.h> // Required for GUI controls
 
 #include "scene.hpp"
 #include "playersettings.hpp"
 #include "gameui.hpp"
-
-// namespace copsNrobbers3D
-// {
-//     extern int playerCount;
-// }
+#include "controller.hpp"
 
 using namespace copsNrobbers3D;
 int main(void)
@@ -37,7 +31,7 @@ int main(void)
 
     bool gui_check = false, prev_gui_check = true;
     Rectangle playercount_field_rect = {100, 50, 80, 100};
-    int players = 2;
+    int players = player_count;
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -58,45 +52,10 @@ int main(void)
 
             player_count = players;
             RefreshCameraLayout();
-            
         }
 
-        // Test input controls on player #3
-        if (player_count <= 4)
-        {
-            // Turn player left or right
-            Vector3 target, position;
-            for (int i = 0; i < copsNrobbers3D::player_count; i++)
-            {
-                target = cameras_splitscreen[i].target, position = cameras_splitscreen[i].position;
-                float forward_mult = 0;
-                if (IsKeyDown(players_settings[i].key_forward)) {
-                    forward_mult = 1;
-                }
-
-                if (IsKeyDown(players_settings[i].key_left) & IsKeyDown(players_settings[i].key_right)) {
-                    if (IsKeyUp(players_settings[i].key_forward))
-                        forward_mult = -1;
-                }
-                else if (IsKeyDown(players_settings[i].key_left))
-                {
-                    cameras_splitscreen[i].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, deltaFrameTime * 1)));
-                }
-                else if (IsKeyDown(players_settings[i].key_right))
-                {
-                    cameras_splitscreen[i].target = Vector3(Vector3Add(position, Vector3RotateByAxisAngle(Vector3Subtract(target, position), {0, 1, 0}, -deltaFrameTime * 1)));
-                }
-                // Move player forward
-                
-                if (forward_mult != 0)
-                {
-                    target = cameras_splitscreen[i].target, position = cameras_splitscreen[i].position;
-                    Vector3 move = Vector3Scale(Vector3Subtract(target, position), forward_mult * deltaFrameTime);
-                    cameras_splitscreen[i].position = Vector3(Vector3Add(position, move));
-                    cameras_splitscreen[i].target = Vector3(Vector3Add(target, move));
-                }
-            }
-        }
+        // Detect and apply input controls
+        ApplyInput();
 
         //----------------------------------------------------------------------------------
         // Draw
@@ -118,7 +77,6 @@ int main(void)
         BeginDrawing();
 
             ClearBackground(Fade(MAROON, 0.8f));
-            // ClearBackground(RAYWHITE);
             DrawCamerasLayout();
 
             // Draw gui overlay

@@ -12,7 +12,7 @@ namespace copsNrobbers3D
     // Constants
     //----------------------------------------------------------------------------------
 
-    const int MAX_PLAYERS = 9;
+    const int MAX_PLAYERS = 4;
 
     const int screenWidth = 1280;
     const int screenHeight = 720;
